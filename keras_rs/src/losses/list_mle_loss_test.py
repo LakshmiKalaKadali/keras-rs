@@ -7,6 +7,7 @@ from keras.losses import serialize
 from keras_rs.src import testing
 from keras_rs.src.losses.list_mle_loss import ListMLELoss
 
+
 class ListMLELossTest(testing.TestCase, parameterized.TestCase):
     def setUp(self):
         self.unbatched_scores = ops.array([1.0, 3.0, 2.0, 4.0, 0.8])
@@ -38,11 +39,15 @@ class ListMLELossTest(testing.TestCase, parameterized.TestCase):
         self.assertAllClose(output, self.expected_output, atol=1e-5)
 
     def test_temperature(self):
-        
         loss_temp = ListMLELoss(temperature=0.5, reduction="none")
-        output_temp = loss_temp(y_true=self.batched_labels, y_pred=self.batched_scores)
-        
-        self.assertAllClose(output_temp,[10.969891,2.1283305],atol=1e-5,
+        output_temp = loss_temp(
+            y_true=self.batched_labels, y_pred=self.batched_scores
+        )
+
+        self.assertAllClose(
+            output_temp,
+            [10.969891, 2.1283305],
+            atol=1e-5,
         )
 
     def test_invalid_input_rank(self):
@@ -55,21 +60,25 @@ class ListMLELossTest(testing.TestCase, parameterized.TestCase):
     def test_loss_reduction(self):
         loss = ListMLELoss(reduction="sum_over_batch_size")
         output = loss(y_true=self.batched_labels, y_pred=self.batched_scores)
-        
-        self.assertAlmostEqual(ops.convert_to_numpy(output), 4.9769425, places=5)
+
+        self.assertAlmostEqual(
+            ops.convert_to_numpy(output), 4.9769425, places=5
+        )
 
     def test_scalar_sample_weight(self):
         sample_weight = ops.array(5.0)
         loss = ListMLELoss(reduction="none")
-    
+
         output = loss(
             y_true=self.batched_labels,
             y_pred=self.batched_scores,
             sample_weight=sample_weight,
         )
-        
-        self.assertAllClose(output, self.expected_output * sample_weight, atol=1e-5)
-        
+
+        self.assertAllClose(
+            output, self.expected_output * sample_weight, atol=1e-5
+        )
+
     def test_model_fit(self):
         inputs = keras.Input(shape=(20,), dtype="float32")
         outputs = keras.layers.Dense(5)(inputs)
