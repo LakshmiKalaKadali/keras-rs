@@ -4,9 +4,9 @@ import keras
 from keras import ops
 
 from keras_rs.src import types
-from keras_rs.src.metrics.utils import standardize_call_inputs_ranks
 from keras_rs.src.api_export import keras_rs_export
 from keras_rs.src.metrics.ranking_metrics_utils import sort_by_scores
+from keras_rs.src.metrics.utils import standardize_call_inputs_ranks
 
 
 @keras_rs_export("keras_rs.losses.ListMLELoss")
