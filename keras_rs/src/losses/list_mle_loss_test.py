@@ -10,16 +10,16 @@ from keras_rs.src.losses.list_mle_loss import ListMLELoss
 
 class ListMLELossTest(testing.TestCase, parameterized.TestCase):
     def setUp(self):
-        self.unbatched_scores = ops.array([1.0, 3.0, 2.0, 4.0, 0.8])
-        self.unbatched_labels = ops.array([1.0, 0.0, 1.0, 3.0, 2.0])
+        self.unbatched_scores = ops.array([1.0, 3.0, 2.0, 4.0, 0.8], dtype="float32")
+        self.unbatched_labels = ops.array([1.0, 0.0, 1.0, 3.0, 2.0], dtype="float32")
 
         self.batched_scores = ops.array(
-            [[1.0, 3.0, 2.0, 4.0, 0.8], [1.0, 1.8, 2.0, 3.0, 2.0]]
+            [[1.0, 3.0, 2.0, 4.0, 0.8], [1.0, 1.8, 2.0, 3.0, 2.0]], dtype="float32"
         )
         self.batched_labels = ops.array(
-            [[1.0, 0.0, 1.0, 3.0, 2.0], [0.0, 1.0, 2.0, 3.0, 1.5]]
+            [[1.0, 0.0, 1.0, 3.0, 2.0], [0.0, 1.0, 2.0, 3.0, 1.5]], dtype="float32"
         )
-        self.expected_output = ops.array([6.865693, 3.088192])
+        self.expected_output = ops.array([6.865693, 3.088192], dtype="float32")
 
     def test_unbatched_input(self):
         loss = ListMLELoss(reduction="none")
@@ -43,7 +43,6 @@ class ListMLELossTest(testing.TestCase, parameterized.TestCase):
         output_temp = loss_temp(
             y_true=self.batched_labels, y_pred=self.batched_scores
         )
-
         self.assertAllClose(
             output_temp,
             [10.969891, 2.1283305],
@@ -60,7 +59,6 @@ class ListMLELossTest(testing.TestCase, parameterized.TestCase):
     def test_loss_reduction(self):
         loss = ListMLELoss(reduction="sum_over_batch_size")
         output = loss(y_true=self.batched_labels, y_pred=self.batched_scores)
-
         self.assertAlmostEqual(
             ops.convert_to_numpy(output), 4.9769425, places=5
         )

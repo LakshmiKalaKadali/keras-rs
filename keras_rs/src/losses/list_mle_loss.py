@@ -127,10 +127,11 @@ class ListMLELoss(keras.losses.Loss):
         )
         sorted_logits = ops.subtract(sorted_logits, raw_max)
 
-        exp_logits = ops.exp(sorted_logits)
-        exp_logits = ops.where(
-            sorted_valid_mask, exp_logits, ops.zeros_like(exp_logits)
+        # Set invalid positions to very negative BEFORE exp
+        sorted_logits = ops.where(
+        sorted_valid_mask, sorted_logits, ops.full_like(sorted_logits, -1e9)
         )
+        exp_logits = ops.exp(sorted_logits)
 
         reversed_exp = ops.flip(exp_logits, axis=1)
         reversed_cumsum = ops.cumsum(reversed_exp, axis=1)
@@ -138,6 +139,7 @@ class ListMLELoss(keras.losses.Loss):
 
         log_normalizers = ops.log(cumsum_from_right + self._epsilon)
         log_probs = ops.subtract(sorted_logits, log_normalizers)
+        
 
         log_probs = ops.where(
             sorted_valid_mask, log_probs, ops.zeros_like(log_probs)
