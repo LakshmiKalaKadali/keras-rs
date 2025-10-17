@@ -208,7 +208,7 @@ class ListMLELoss(keras.losses.Loss):
         losses = ops.multiply(losses, weights)
         losses = ops.squeeze(losses, axis=-1)
         return losses
-
+    # getting config
     def get_config(self) -> dict[str, Any]:
         config: dict[str, Any] = super().get_config()
         config.update({"temperature": self.temperature})
